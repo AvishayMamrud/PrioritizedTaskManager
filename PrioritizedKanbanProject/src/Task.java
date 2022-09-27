@@ -5,10 +5,11 @@ public class Task {
     private String description;
     private LocalDate deadline;
     private int priority;
+    private float currPriority;
 
     public Task(String name, String description, LocalDate deadline, int priority){
-        if(name == null)
-            throw new NullPointerException("a task must have a distinctive name.");
+        if(name == null || name.equals(""))
+            throw new NullPointerException("A task must have a name.");
         this.name = name;
         this.description = description;
         this.deadline = deadline;
@@ -16,31 +17,33 @@ public class Task {
     }
 
     public void setName(String newName){
+        if(newName == null || newName.equals(""))
+            throw new NullPointerException("A task must have a name.");
         this.name = newName;
-    }
-
-    public void setDescription(String newDescription){
-        this.description = newDescription;
-    }
-
-    public void setDeadline(LocalDate newDeadline){
-        this.deadline = newDeadline;
-    }
-
-    public void setPriority(int newPriority){
-        this.priority = newPriority;
     }
 
     public String getName(){
         return name;
     }
 
+    public void setDescription(String newDescription){
+        this.description = newDescription;
+    }
+
     public String getDescription(){
         return description;
     }
 
+    public void setDeadline(LocalDate newDeadline){
+        this.deadline = newDeadline;
+    }
+
     public LocalDate getDeadline(){
         return deadline;
+    }
+
+    public void setPriority(int newPriority){
+        this.priority = newPriority;
     }
 
     public int getPriority(){
@@ -52,5 +55,9 @@ public class Task {
         if(other instanceof Task)
             return this.name.equals(((Task)other).getName());
         return false;
+    }
+
+    public void resetPriority() {
+        currPriority = priority;
     }
 }
