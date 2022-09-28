@@ -1,3 +1,4 @@
+import javax.naming.NoPermissionException;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -11,7 +12,14 @@ public class Board {
             throw new IllegalArgumentException("A board must have a name.");
         this.name = name;
         columns = new HashMap<>();
+        Column todo = new Column("TODO");
+        Column done = new Column("DONE");
+        columns.put("TODO", todo);
+        columns.put("DONE", done);
+
         columnsOrder = new ArrayList<>();
+        columnsOrder.add("TODO");
+        columnsOrder.add("DONE");
     }
 
     public void setName(String newName){
@@ -25,14 +33,16 @@ public class Board {
     }
 
     public void addColumn(String columnName) {//}, int index){
-        if (!columns.containsKey(columnName))
+        if (columns.containsKey(columnName))
             throw new IllegalArgumentException("A column must have a distinct name.");
         Column col = new Column(columnName);
         columns.put(columnName, col);
-        columnsOrder.add(columnsOrder.size() - 2, columnName);
+        columnsOrder.add(columnsOrder.size() - 1, columnName);
     }
 
     public boolean removeColumn(String columnName){
+        if(columnsOrder.size() <= 1)
+            throw new IllegalArgumentException("a board must have at least one column. you may delete the board if you like");
         boolean res = columns.remove(columnName) != null;
         if(res)
             columnsOrder.remove(columnName);
@@ -102,5 +112,9 @@ public class Board {
 
     public void setTaskPriority(String columnName, String taskName, int newPriority) {
         getColumn(columnName).setTaskPriority(taskName, newPriority);
+    }
+
+    public Collection<String> getColumnsNames() {
+        return columnsOrder;
     }
 }

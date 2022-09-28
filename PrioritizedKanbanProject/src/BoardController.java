@@ -85,4 +85,12 @@ public class BoardController {
             throw new NoSuchElementException("No such board with the name " + boardName);
         return boards.get(boardName);
     }
+
+    public Collection<String> getBoardNames() {
+        return boards.keySet();
+    }
+
+    public Collection<String> getColumnsNames(String boardName) {
+        return getBoard(boardName).getColumnsNames();
+    }
 }
