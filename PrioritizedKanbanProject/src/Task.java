@@ -59,8 +59,7 @@ public class Task {
 
     @Override
     public String toString(){
-        return "\nName: " + name +
-                "\nDescription: " + description +
+        return "\nDescription: " + description +
                 "\nDeadline: " + deadline.toString() +
                 "\nPriority: " + priority;
     }
