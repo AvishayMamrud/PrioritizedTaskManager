@@ -161,8 +161,10 @@ public class Program {
                 System.out.println(bc.getTask(boardName, columnName, taskName).toString());
                 int index = 0;
                 System.out.println("\nmore operations:");
-                System.out.println(++index + ". change priority");
                 System.out.println(++index + ". rename task");
+                System.out.println(++index + ". change description");
+                System.out.println(++index + ". change deadline");
+                System.out.println(++index + ". change priority");
                 System.out.println(++index + ". delete task");
 
                 displayBackOption();
@@ -172,15 +174,21 @@ public class Program {
                     return;
                 }else{
                     switch (choice) {
-                        case 1: //change priority
-                            bc.setTaskPriority(boardName, columnName, taskName, waitForNum(0, 5, "priority"));
-                            break;
-                        case 2: //rename task
+                        case 1: //rename task
                             String newTaskName = waitForString("new name");
                             bc.setTaskName(boardName, columnName, taskName, newTaskName);
                             taskName = newTaskName;
                             break;
-                        case 3: //delete task
+                        case 2: //change description
+                            bc.setTaskDescription(boardName, columnName, taskName, waitForString("new description"));
+                            break;
+                        case 3: //change deadline
+                            bc.setTaskDeadline(boardName, columnName, taskName, waitForDate("new deadline"));
+                            break;
+                        case 4: //change priority
+                            bc.setTaskPriority(boardName, columnName, taskName, waitForNum(0, 5, "priority"));
+                            break;
+                        case 5: //delete task
                             bc.removeTask(boardName, columnName, taskName);
                             return;
                     }
