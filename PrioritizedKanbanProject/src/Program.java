@@ -1,12 +1,13 @@
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Scanner;
 
 public class Program {
 
-    private BoardController bc;
-    private Scanner scan = new Scanner(System.in);
+    private final BoardController bc;
+    private final Scanner scan = new Scanner(System.in);
 
     public Program(){
         bc = BoardController.getInstance();
@@ -14,115 +15,217 @@ public class Program {
 
     public void displayMainMenu(){
         while(true) {
-            System.out.println("select your operation:");
-            System.out.println("1. add board");
-            System.out.println("2. view my boards");
-            //add a new board
-            //view my boards
-            int choice = waitForNum(2);
-            Callback nextFunc = () -> {
+            try{
+                System.out.println("\nselect your operation:");
+                System.out.println("1. add board");
+                System.out.println("2. view my boards");
+
+                displayBackOption();
+                int choice = waitForNum(0, 2, "choice");
                 switch (choice) {
-                    case 1:
+                    case 0:
+                        return;
+                    case 1: //add a new board
                         bc.addBoard(waitForString("new board's name"));
                         break;
-                    case 2:
+                    case 2: //view my boards
                         displayBoardsMenu();
                         break;
                 }
-            };
-            Callback backFunc = () -> {throw new IllegalArgumentException("");};
-            nextStep(backFunc, nextFunc, choice);
+            }catch(Exception e){
+                System.out.println(e.getMessage());
+            }
         }
     }
 
     public void displayBoardsMenu(){
-        List<String> boards = new ArrayList<>(bc.getBoardNames());
-        System.out.println("your boards:");
-        int index = 0;
-        for (String boardName : boards) {
-            System.out.println(++index + ". " + boardName);
+        while(true){
+            try{
+                List<String> boards = new ArrayList<>(bc.getBoardNames());
+                System.out.println("\nyour boards:");
+                int index = 0;
+                for (String boardName : boards) {
+                    System.out.println(++index + ". " + boardName);
+                }
+                displayBackOption();
+                int choice = waitForNum(0, index, "choice");
+                if(choice == 0){
+                    return;
+                }else{
+                    displayBoard(boards.get(choice - 1));
+                }
+            }catch(Exception e){
+                System.out.println(e.getMessage());
+            }
         }
-
-        int choice = waitForNum(index);
-        Callback nextFunc = () -> displayBoard(boards.get(choice-1));
-        Callback backFunc = this::displayMainMenu;
-        nextStep(backFunc, nextFunc, choice);
-    }
-
-    private void nextStep(Callback goBack, Callback func, int index){
-        if(index == 0)
-            goBack.call();
-        else func.call();
     }
 
     public void displayBoard(String boardName){
-
-        List<String> colNames = new ArrayList<>(bc.getColumnsNames(boardName));
-
-        System.out.println(boardName + "'s columns:");
-        int index = 0;
-        for (String colName : colNames) {
-            System.out.println(++index + ". " + colName);
-        }
-        System.out.println();
-        System.out.println(++index + ". add column");
-        System.out.println(++index + ". reposition column");
-        System.out.println(++index + ". rename board");
-        System.out.println(++index + ". delete board");
-
-        int choice = waitForNum(index);
-
-        Callback nextFunc = () -> {
-            if (choice <= colNames.size())
-                displayColumn(colNames.get(choice - 1));
-            else {
-                switch (choice - colNames.size()){
-                    case 1: //add column
-                        bc.addColumn(boardName, waitForString("column name"));
-                        break;
-                    case 2: //reposition column
-                        bc.repositionColumn(boardName, waitForString("column name"), waitForNum(colNames.size()));
-                        break;
-                    case 3: //rename board
-                        bc.setBoardName(boardName, waitForString("new board name"));
-                        break;
-                    case 4: //delete board
-                        bc.removeBoard(boardName);
-                        break;
-                }
-            }
-        };
-        Callback backFunc = this::displayBoardsMenu;
-        nextStep(backFunc, nextFunc, choice);
-    }
-
-    private void displayColumn(String columnName){
-        /////
-    }
-
-    public int waitForNum(int max){
-        displayBackOption();
-        System.out.print("\nselect an option in the range (0-" + max + "): ");
-        boolean gotNum = false;
-        int num = 0;
-        while(!gotNum){
+        while(true){
             try{
-                num = scan.nextInt();
-                gotNum = num <= max && num >= 0;
+                List<String> colNames = new ArrayList<>(bc.getColumnsNames(boardName));
+
+                System.out.println("\n" + boardName + "'s columns:");
+                int index = 0;
+                for (String colName : colNames) {
+                    System.out.println(++index + ". " + colName);
+                }
+                System.out.println("\nmore operations:");
+                System.out.println(++index + ". add column");
+                System.out.println(++index + ". reposition column");
+                System.out.println(++index + ". rename board");
+                System.out.println(++index + ". delete board");
+
+                displayBackOption();
+                int choice = waitForNum(0, index, "choice");
+
+                if(choice == 0) {
+                    return;
+                }else if (choice > colNames.size()) {
+                    switch (choice - colNames.size()){
+                        case 1: //add column
+                            bc.addColumn(boardName, waitForString("column name"));
+                            break;
+                        case 2: //reposition column
+                            bc.repositionColumn(boardName, colNames.get(waitForNum(1, colNames.size(), "column index") - 1), waitForNum(1, colNames.size(), "new position") - 1);
+                            break;
+                        case 3: //rename board
+                            String newBoardName = waitForString("new board name");
+                            bc.setBoardName(boardName, newBoardName);
+                            boardName = newBoardName;
+                            break;
+                        case 4: //delete board
+                            bc.removeBoard(boardName);
+                            return;
+                    }
+                }else{
+                    displayColumn(boardName, colNames.get(choice - 1));
+                }
             }catch(Exception e){
-                System.out.print("\nstill waiting for a number...: ");
+                System.out.println(e.getMessage());
             }
         }
-        return num;
+    }
+
+    private void displayColumn(String boardName, String columnName){
+        while(true){
+            try{
+                List<String> tasksNames = new ArrayList<>(bc.getTasksNames(boardName, columnName));
+
+                System.out.println("\n" + columnName + "'s tasks:");
+                int index = 0;
+                for (String taskName : tasksNames) {
+                    System.out.println(++index + ". " + taskName);
+                }
+                System.out.println("\nmore operations:");
+                System.out.println(++index + ". add task");
+                System.out.println(++index + ". rename column");
+                System.out.println(++index + ". delete column");
+
+                displayBackOption();
+                int choice = waitForNum(0, index, "choice");
+
+                if(choice == 0){
+                    return;
+                }else if (choice <= tasksNames.size()){
+                    displayTask(boardName, columnName, tasksNames.get(choice - 1));
+                }else {
+                    switch (choice - tasksNames.size()){
+                        case 1: //add task
+                            String taskName = waitForString("task name");
+                            String description = waitForString("task description");
+                            LocalDate deadline = waitForDate("task deadline");
+                            int priority = waitForNum(1, 5, "task priority");
+                            bc.addTask(boardName, columnName, taskName, description, deadline, priority);
+                            break;
+                        case 2: //rename column
+                            String newColumnName = waitForString("new column name");
+                            bc.setColumnName(boardName, columnName, newColumnName);
+                            columnName = newColumnName;
+                            break;
+                        case 3: //delete column
+                            bc.removeColumn(boardName, columnName);
+                            return;
+                    }
+                }
+            }catch(Exception e){
+                System.out.println(e.getMessage());
+            }
+        }
+    }
+
+    private void displayTask(String boardName, String columnName, String taskName) {
+        while(true){
+            try{
+                System.out.println("\n" + taskName + "'s details:");
+                System.out.println(bc.getTask(boardName, columnName, taskName).toString());
+                int index = 0;
+                System.out.println("\nmore operations:");
+                System.out.println(++index + ". change priority");
+                System.out.println(++index + ". rename task");
+                System.out.println(++index + ". delete task");
+
+                displayBackOption();
+                int choice = waitForNum(0, index, "choice");
+
+                if(choice == 0){
+                    return;
+                }else{
+                    switch (choice) {
+                        case 1: //change priority
+                            bc.setTaskPriority(boardName, columnName, taskName, waitForNum(0, 5, "priority"));
+                            break;
+                        case 2: //rename task
+                            String newTaskName = waitForString("new name");
+                            bc.setTaskName(boardName, columnName, taskName, newTaskName);
+                            taskName = newTaskName;
+                            break;
+                        case 3: //delete task
+                            bc.removeTask(boardName, columnName, taskName);
+                            return;
+                    }
+                }
+            }catch(Exception e){
+                System.out.println(e.getMessage());
+            }
+        }
     }
 
     private void displayBackOption(){
         System.out.println("\nto go back press 0");
     }
 
+    private int waitForNum(int min, int max, String wish){
+        System.out.print("\nselect a " + wish + " in the range ("+ min + "-" + max + "): ");
+        int num = -1;
+        do{
+            try {
+                num = Integer.parseInt(scan.nextLine());
+            } catch (Exception ignored) {
+                System.out.println("\nstill waiting for a number...: ");
+            }
+        }while(!(num <= max && num >= min));
+        return num;
+    }
+
     private String waitForString(String wish){
-        System.out.print("type a " + wish + ": ");
-        return scan.next();
+        System.out.print("\ntype a " + wish + ": ");
+        return scan.nextLine();
+    }
+
+    private LocalDate waitForDate(String wish) {
+        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("d/M/yyyy");
+        LocalDate date = null;
+        while(date == null){
+            System.out.print("type in a " + wish + " date (d/M/yyyy): ");
+            String userInput = scan.nextLine();
+            try{
+                date = LocalDate.parse(userInput, dateFormat);
+            }catch(Exception e){
+                System.out.println("\nthe date does not match the pattern (d/M/yyyy)\n");
+            }
+        }
+        return date;
     }
 
     public static void main(String[] args){

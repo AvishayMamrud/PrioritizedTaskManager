@@ -1,7 +1,5 @@
 import java.time.LocalDate;
-import java.util.Collection;
-import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 public class Column {
     private String name;
@@ -11,6 +9,7 @@ public class Column {
         if(name == null || name.equals(""))
             throw new IllegalArgumentException("A column must have a name.");
         this.name = name;
+        tasks = new HashMap<>();
     }
 
     public void setName(String newName){
@@ -24,7 +23,7 @@ public class Column {
     }
 
     public void addTask(String name, String description, LocalDate deadline, int priority){
-        if(!tasks.containsKey(name))
+        if(tasks.containsKey(name))
             throw new IllegalArgumentException("A task must have a distinct name.");
         Task newTask = new Task(name, description, deadline, priority);
         tasks.put(name, newTask);
@@ -71,5 +70,15 @@ public class Column {
 
     public void setTaskPriority(String taskName, int newPriority) {
         getTask(taskName).setPriority(newPriority);
+    }
+
+    public List<String> getTasksNames() {
+        List<String> tasksNames = new ArrayList<>(tasks.keySet());
+        tasksNames.sort((x,y) -> {
+            float prrty1 = tasks.get(x).getCurrPriority();
+            float prrty2 = tasks.get(y).getCurrPriority();
+            return Float.compare(prrty1, prrty2);
+        });
+        return tasksNames;
     }
 }

@@ -29,6 +29,8 @@ public class BoardController {
     }
 
     public void setBoardName(String oldName, String newName){
+        if(boards.containsKey(newName))
+            throw new IllegalArgumentException("There is already board named '" + newName + "'.");
         Board board = boards.remove(oldName);
         if(board == null)
             throw new NoSuchElementException("No such board with the name " + oldName);
@@ -52,8 +54,8 @@ public class BoardController {
         getBoard(boardName).setColumnName(oldName, newName);
     }
 
-    public void addTask(String boardName, String taskName, String description, LocalDate deadline, int priority){
-        getBoard(boardName).addTask(INITIAL_COLUMN_NAME, taskName, description, deadline, priority);
+    public void addTask(String boardName, String columnName, String taskName, String description, LocalDate deadline, int priority){
+        getBoard(boardName).addTask(columnName, taskName, description, deadline, priority);
     }
 
     public boolean removeTask(String boardName, String columnName, String taskName){
@@ -92,5 +94,13 @@ public class BoardController {
 
     public Collection<String> getColumnsNames(String boardName) {
         return getBoard(boardName).getColumnsNames();
+    }
+
+    public List<String> getTasksNames(String boardName, String columnName) {
+        return getBoard(boardName).getTasksNames(columnName);
+    }
+
+    public Task getTask(String boardName, String columnName, String taskName) {
+        return getBoard(boardName).getTask(columnName, taskName);
     }
 }

@@ -57,7 +57,19 @@ public class Task {
         return false;
     }
 
+    @Override
+    public String toString(){
+        return "\nName: " + name +
+                "\nDescription: " + description +
+                "\nDeadline: " + deadline.toString() +
+                "\nPriority: " + priority;
+    }
+
     public void resetPriority() {
         currPriority = priority;
+    }
+
+    public float getCurrPriority() {
+        return currPriority;
     }
 }

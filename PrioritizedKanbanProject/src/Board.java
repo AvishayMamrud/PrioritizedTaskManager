@@ -23,7 +23,7 @@ public class Board {
     }
 
     public void setName(String newName){
-        if(newName == null || newName.equals(name))
+        if(newName == null || newName.equals(""))
             throw new IllegalArgumentException("A board must have a name.");
         this.name = newName;
     }
@@ -116,5 +116,13 @@ public class Board {
 
     public Collection<String> getColumnsNames() {
         return columnsOrder;
+    }
+
+    public List<String> getTasksNames(String columnName) {
+        return getColumn(columnName).getTasksNames();
+    }
+
+    public Task getTask(String columnName, String taskName) {
+        return getColumn(columnName).getTask(taskName);
     }
 }
