@@ -1,9 +1,11 @@
+package Kanban;
+
 import java.time.LocalDate;
 import java.util.*;
 
 public class Column {
     private String name;
-    private Map<String, Task> tasks;
+    private final Map<String, Task> tasks;
 
     public Column(String name){
         if(name == null || name.equals(""))
