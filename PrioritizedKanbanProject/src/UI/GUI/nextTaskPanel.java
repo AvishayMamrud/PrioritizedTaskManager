@@ -11,8 +11,8 @@ import java.time.LocalDate;
 
 public class nextTaskPanel extends JPanel {
 
-    public nextTaskPanel(frameStruct struct, JLabel errorLabel, prioritizedTaskManager ptm) {
-        ResponseT<Task> resp = ptm.peekTask();
+    public nextTaskPanel(frameStruct struct) {
+        ResponseT<Task> resp = struct.ptm.peekTask();
         if(resp.getValue() != null){
             Task task = resp.getValue();
             BoxLayout boxlayout = new BoxLayout(this, BoxLayout.Y_AXIS);
@@ -63,30 +63,30 @@ public class nextTaskPanel extends JPanel {
             btn_finish.setFont(descFont);
             btn_next.setFont(descFont);
             btn_delete.addActionListener(e -> {
-                Response response = ptm.removeTask(task);
+                Response response = struct.ptm.removeTask(task);
                 if(response.errorOccurred()){
-                    errorLabel.setText(response.getErrorMessage());
+                    struct.errorLabel.setText(response.getErrorMessage());
                 }else{
-                    new nextTaskPanel(struct, new JLabel(), ptm);
-                    errorLabel.setText("task has been removed.");
+                    struct.replacePanel(new nextTaskPanel(struct));
+                    struct.errorLabel.setText("This task has been removed");
                 }
                 SwingUtilities.updateComponentTreeUI(struct.frame);
             });
             btn_edit.addActionListener(e -> {
-
+                struct.replacePanel(new editTaskPanel(struct, task));
             });
             btn_finish.addActionListener(e -> {
-                Response response = ptm.finishTask(task.getName());
+                Response response = struct.ptm.finishTask(task.getName());
                 if(response.errorOccurred()){
-                    errorLabel.setText(response.getErrorMessage());
+                    struct.errorLabel.setText(response.getErrorMessage());
                 }else{
-                    new nextTaskPanel(struct, new JLabel(), ptm);
-                    errorLabel.setText("task finished! Great Job!!");
+                    struct.replacePanel(new nextTaskPanel(struct));
+                    struct.errorLabel.setText("task finished! Great Job!!");
                 }
                 SwingUtilities.updateComponentTreeUI(struct.frame);
             });
             btn_next.addActionListener(e -> {
-                struct.replacePanel(new nextTaskPanel(struct, errorLabel, ptm));
+                struct.replacePanel(new nextTaskPanel(struct));
             });
 
             this.add(name_label);
@@ -102,9 +102,9 @@ public class nextTaskPanel extends JPanel {
             struct.frame.add(this, BorderLayout.CENTER);
         }
         if(resp.errorOccurred()){
-            errorLabel.setText(resp.getErrorMessage());
+            struct.errorLabel.setText(resp.getErrorMessage());
         }else{
-            errorLabel.setText("");
+            struct.errorLabel.setText("");
         }
     }
 

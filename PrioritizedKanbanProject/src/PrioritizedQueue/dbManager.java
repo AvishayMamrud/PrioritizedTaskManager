@@ -122,7 +122,7 @@ public class dbManager {
             p.executeUpdate();
             return new Response();
         } catch (SQLException e) {
-            return new Response(e.getMessage());
+            return new Response("database error occurred. there might be another task with the same name.");
         }
     }
 

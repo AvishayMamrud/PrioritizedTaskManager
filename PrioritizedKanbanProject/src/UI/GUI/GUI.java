@@ -15,7 +15,7 @@ public class GUI{
         struct = new frameStruct();
 
         JPanel header = new headerPanel(struct, struct.errorLabel, struct.ptm);
-        JPanel menu = new menuPanel(struct, struct.errorLabel, struct.ptm);
+        JPanel menu = new menuPanel(struct);
 
         JPanel scrollMenu = new JPanel();
         scrollMenu.setLayout(new BorderLayout());
@@ -27,7 +27,7 @@ public class GUI{
         struct.frame.add(header, BorderLayout.NORTH);
         struct.frame.add(scrollMenu, BorderLayout.WEST);
 
-        struct.replacePanel(new viewTasksPanel(struct, struct.errorLabel, struct.ptm));
+        struct.replacePanel(new viewTasksPanel(struct));
         struct.errorLabel.setText("Welcome!!!");
     }
 }

@@ -12,18 +12,18 @@ import java.util.List;
 
 public class viewTasksPanel extends JPanel {
 
-    public viewTasksPanel(frameStruct struct, JLabel errorLabel, prioritizedTaskManager ptm) {
+    public viewTasksPanel(frameStruct struct) {
         GridBagLayout grid = new GridBagLayout();
-        ResponseT<java.util.List<Task>> resp = ptm.getTasks();
+        ResponseT<java.util.List<Task>> resp = struct.ptm.getTasks();
 
         if(resp.errorOccurred()){
-            errorLabel.setText(resp.getErrorMessage());
+            struct.errorLabel.setText(resp.getErrorMessage());
         }else{
             java.util.List<Task> tasks = resp.getValue();
             if(tasks.size() == 0){
-                errorLabel.setText("no tasks to display.");
+                struct.errorLabel.setText("no tasks to display.");
             }else{
-                errorLabel.setText("");
+                struct.errorLabel.setText("");
                 List<JComponent> components = new ArrayList<>();
 
                 GridBagConstraints gbc = new GridBagConstraints();
@@ -37,21 +37,22 @@ public class viewTasksPanel extends JPanel {
                 gbc.insets = new Insets(1, 1, 1, 1);
 
                 for (Task task : tasks) {
-                    JLabel label1 = newJLabel(Integer.toString(task.getPriority()));
-                    JLabel label2 = newJLabel(task.getName());
+                    JLabel priorityLabel = newJLabel(Integer.toString(task.getPriority()));
+                    String name = task.getName();
+                    JLabel nameLabel = newJLabel(name.length() > 15 ? name.substring(0,12) + "..." : name);
                     LocalDate deadline = task.getDeadline();
-                    JLabel label3 = newJLabel(deadline == null ? "" : deadline.toString());
-                    components.add(label1);
-                    components.add(label2);
-                    components.add(label3);
+                    JLabel deadlineLabel = newJLabel(deadline == null ? "" : deadline.toString());
+                    components.add(priorityLabel);
+                    components.add(nameLabel);
+                    components.add(deadlineLabel);
                     JButton button = new JButton("-");
                     button.addActionListener(e -> {
-                        System.out.println(ptm.removeTask(task));
-                        this.remove(label1);
-                        this.remove(label2);
-                        this.remove(label3);
+                        System.out.println(struct.ptm.removeTask(task));
+                        this.remove(priorityLabel);
+                        this.remove(nameLabel);
+                        this.remove(deadlineLabel);
                         this.remove(button);
-                        struct.errorLabel.setText("The task removed successfully");
+                        struct.errorLabel.setText("The task has been removed");
                         SwingUtilities.updateComponentTreeUI(struct.frame);
                     });
                     components.add(button);

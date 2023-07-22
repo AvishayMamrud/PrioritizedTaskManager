@@ -7,7 +7,7 @@ import java.awt.*;
 
 public class menuPanel extends JPanel {
 
-    public menuPanel(frameStruct struct, JLabel errorLabel, prioritizedTaskManager ptm){
+    public menuPanel(frameStruct struct){
 
         JPanel panel2 = new JPanel();
         GridBagLayout grid = new GridBagLayout();
@@ -24,9 +24,9 @@ public class menuPanel extends JPanel {
         JButton button1 = new JButton("New Task");
         JButton button2 = new JButton("View All Tasks");
         JButton button3 = new JButton("Next Task");
-        button1.addActionListener(e -> struct.replacePanel(new addTaskPanel(struct, errorLabel, ptm)));
-        button2.addActionListener(e -> struct.replacePanel(new viewTasksPanel(struct, errorLabel, ptm)));
-        button3.addActionListener(e -> struct.replacePanel(new nextTaskPanel(struct, errorLabel, ptm)));
+        button1.addActionListener(e -> struct.replacePanel(new addTaskPanel(struct)));
+        button2.addActionListener(e -> struct.replacePanel(new viewTasksPanel(struct)));
+        button3.addActionListener(e -> struct.replacePanel(new nextTaskPanel(struct)));
         button1.setFont(font);
         button2.setFont(font);
         button3.setFont(font);

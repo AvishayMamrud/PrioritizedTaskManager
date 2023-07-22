@@ -1,5 +1,6 @@
 package UI.GUI;
 
+import PrioritizedQueue.Task;
 import Utilities.Response;
 
 import javax.swing.*;
@@ -11,9 +12,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class addTaskPanel extends JPanel{
+public class editTaskPanel extends JPanel{
 
-    public addTaskPanel(frameStruct struct) {
+    public editTaskPanel(frameStruct struct, Task task) {
         GridBagLayout grid = new GridBagLayout();
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.ipadx = 25; // add padding
@@ -29,12 +30,12 @@ public class addTaskPanel extends JPanel{
         JLabel deadline_label = newJLabel("Deadline");
         JLabel priority_label = newJLabel("Priority");
 
-        JTextField name_textf = new JTextField();
-        JTextArea desc_textf = new JTextArea();
+        JTextField name_textf = new JTextField(task.getName());
+        JTextArea desc_textf = new JTextArea(task.getDescription());
         DateFormat format = new SimpleDateFormat("d/M/yyyy");
         JFormattedTextField deadline_textf = new JFormattedTextField(format);
-        deadline_textf.setText("12/11/2020");
-        JTextField priority_textf = new JTextField();
+        deadline_textf.setText(task.getDeadline().toString());
+        JTextField priority_textf = new JTextField(String.valueOf(task.getPriority()));
 
         JButton button = new JButton("Submit");
         button.addActionListener(e -> {
@@ -50,16 +51,13 @@ public class addTaskPanel extends JPanel{
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d/M/yyyy");
             LocalDate deadline = dl.equals("") ? null : LocalDate.parse(deadline_textf.getText(), formatter);
 
-            Response resp = struct.ptm.addTask(name_textf.getText(), desc_textf.getText(), deadline, Integer.parseInt(priority_textf.getText()));
+            Response resp = struct.ptm.updateTask(task.getName(), name_textf.getText(), desc_textf.getText(), deadline, Integer.parseInt(priority_textf.getText()));
             if(resp.errorOccurred()){
                 struct.errorLabel.setText(resp.getErrorMessage());
                 SwingUtilities.updateComponentTreeUI(struct.frame);
             }else{
-                name_textf.setText("");
-                desc_textf.setText("");
-                deadline_textf.setText("");
-                priority_textf.setText("");
-                struct.errorLabel.setText("task added successfully!!");
+                struct.replacePanel(new nextTaskPanel(struct));
+                struct.errorLabel.setText("task changed successfully!!");
                 SwingUtilities.updateComponentTreeUI(struct.frame);
             }
         });

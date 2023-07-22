@@ -3,6 +3,7 @@ package PrioritizedQueue;
 import Utilities.Response;
 import Utilities.ResponseT;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -189,5 +190,30 @@ public class prioritizedTaskManager {
             return new Response();
         }
         return new Response("not the correct task-name.");
+    }
+
+    public Response updateTask(String oldName, String newName, String newDesc, LocalDate newDeadline, int newPriority) {
+        try {
+            if (newName == null || newName.equals(""))
+                throw new IllegalArgumentException("a task must have a unique name.");
+            if (newPriority < 1 || newPriority > 5)
+                throw new IllegalArgumentException("the priority scale is 1-5.");
+            int oldPriority = currTask.getPriority();
+
+            currTask.setName(newName);
+            currTask.setDescription(newDesc);
+            currTask.setDeadline(newDeadline);
+            currTask.setPriority(newPriority);
+
+            Response resp = dal.updateTask(oldName, currTask);
+            if (resp.errorOccurred()) {
+                return resp;
+            }
+            tasks[oldPriority - 1].remove(currTask);
+            tasks[newPriority - 1].add(currTask);
+            return new Response();
+        }catch(Exception e2){
+            return new Response(e2.getMessage());
+        }
     }
 }
