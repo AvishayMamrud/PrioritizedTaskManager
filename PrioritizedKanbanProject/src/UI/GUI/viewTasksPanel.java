@@ -7,6 +7,7 @@ import Utilities.ResponseT;
 import javax.swing.*;
 import java.awt.*;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,19 +42,20 @@ public class viewTasksPanel extends JPanel {
                     String name = task.getName();
                     JLabel nameLabel = newJLabel(name.length() > 15 ? name.substring(0,12) + "..." : name);
                     LocalDate deadline = task.getDeadline();
-                    JLabel deadlineLabel = newJLabel(deadline == null ? "" : deadline.toString());
+                    JLabel deadlineLabel = newJLabel(deadline == null ? "" : deadline.format(DateTimeFormatter.ofPattern("d/M/yyyy")));
                     components.add(priorityLabel);
                     components.add(nameLabel);
                     components.add(deadlineLabel);
                     JButton button = new JButton("-");
                     button.addActionListener(e -> {
-                        System.out.println(struct.ptm.removeTask(task));
-                        this.remove(priorityLabel);
-                        this.remove(nameLabel);
-                        this.remove(deadlineLabel);
-                        this.remove(button);
-                        struct.errorLabel.setText("The task has been removed");
-                        SwingUtilities.updateComponentTreeUI(struct.frame);
+//                        System.out.println(struct.ptm.removeTask(task));
+//                        this.remove(priorityLabel);
+//                        this.remove(nameLabel);
+//                        this.remove(deadlineLabel);
+//                        this.remove(button);
+//                        struct.errorLabel.setText("The task has been removed");
+//                        SwingUtilities.updateComponentTreeUI(struct.frame);
+                        struct.replacePanel(new nextTaskPanel(struct, task, () -> struct.replacePanel(new viewTasksPanel(struct))));
                     });
                     components.add(button);
                 }

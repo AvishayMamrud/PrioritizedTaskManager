@@ -192,25 +192,30 @@ public class prioritizedTaskManager {
         return new Response("not the correct task-name.");
     }
 
-    public Response updateTask(String oldName, String newName, String newDesc, LocalDate newDeadline, int newPriority) {
+    public Response updateTask(String oldName, int oldPriority, String newName, String newDesc, LocalDate newDeadline, int newPriority) {
         try {
             if (newName == null || newName.equals(""))
                 throw new IllegalArgumentException("a task must have a unique name.");
             if (newPriority < 1 || newPriority > 5)
                 throw new IllegalArgumentException("the priority scale is 1-5.");
-            int oldPriority = currTask.getPriority();
+
+            currTask = tasks[oldPriority - 1].stream().filter(x -> x.getName().equals(oldName)).iterator().next();
 
             currTask.setName(newName);
             currTask.setDescription(newDesc);
             currTask.setDeadline(newDeadline);
             currTask.setPriority(newPriority);
 
+            System.out.println(newDeadline);
+
             Response resp = dal.updateTask(oldName, currTask);
             if (resp.errorOccurred()) {
                 return resp;
             }
-            tasks[oldPriority - 1].remove(currTask);
-            tasks[newPriority - 1].add(currTask);
+            if(oldPriority != newPriority){
+                tasks[oldPriority - 1].remove(currTask);
+                tasks[newPriority - 1].add(currTask);
+            }
             return new Response();
         }catch(Exception e2){
             return new Response(e2.getMessage());

@@ -113,12 +113,19 @@ public class dbManager {
     public Response updateTask(String oldName, Task task){
         try (Connection con = DriverManager.getConnection(path)) {
             String sqlStatement = "update " + tasksTbl + " set name = ?, description = ?, deadline = ?, priority = ? where name = ?;";
+//            System.out.println(task.getName() + " "
+//                    + task.getDescription() + " "
+//                    + Date.valueOf(task.getDeadline()) + " "
+//                    + task.getPriority() + " "
+//                    + oldName);
+            LocalDate dl = task.getDeadline();
             PreparedStatement p = con.prepareStatement(sqlStatement);
             p.setString(1, task.getName());
             p.setString(2, task.getDescription());
-            p.setDate(3, Date.valueOf(task.getDeadline()));
+            p.setDate(3, dl == null ? null : Date.valueOf(dl));
             p.setInt(4, task.getPriority());
             p.setString(5, oldName);
+
             p.executeUpdate();
             return new Response();
         } catch (SQLException e) {

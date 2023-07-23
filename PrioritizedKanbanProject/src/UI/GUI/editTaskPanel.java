@@ -9,12 +9,14 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
+import java.util.Formatter;
 import java.util.List;
 
 public class editTaskPanel extends JPanel{
 
-    public editTaskPanel(frameStruct struct, Task task) {
+    public editTaskPanel(frameStruct struct, Task task, Runnable backCommand) {
         GridBagLayout grid = new GridBagLayout();
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.ipadx = 25; // add padding
@@ -34,7 +36,9 @@ public class editTaskPanel extends JPanel{
         JTextArea desc_textf = new JTextArea(task.getDescription());
         DateFormat format = new SimpleDateFormat("d/M/yyyy");
         JFormattedTextField deadline_textf = new JFormattedTextField(format);
-        deadline_textf.setText(task.getDeadline().toString());
+        LocalDate oldDeadline = task.getDeadline();
+        String deadlineStr = oldDeadline == null ? "" : oldDeadline.format(DateTimeFormatter.ofPattern("d/M/yyyy"));
+        deadline_textf.setText(deadlineStr);
         JTextField priority_textf = new JTextField(String.valueOf(task.getPriority()));
 
         JButton button = new JButton("Submit");
@@ -49,14 +53,14 @@ public class editTaskPanel extends JPanel{
                 return;
             }
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d/M/yyyy");
-            LocalDate deadline = dl.equals("") ? null : LocalDate.parse(deadline_textf.getText(), formatter);
+            LocalDate deadline = dl == null || dl.equals("") ? null : LocalDate.parse(dl, formatter);
 
-            Response resp = struct.ptm.updateTask(task.getName(), name_textf.getText(), desc_textf.getText(), deadline, Integer.parseInt(priority_textf.getText()));
+            Response resp = struct.ptm.updateTask(task.getName(), task.getPriority(), name, desc, deadline, Integer.parseInt(priority));
             if(resp.errorOccurred()){
                 struct.errorLabel.setText(resp.getErrorMessage());
                 SwingUtilities.updateComponentTreeUI(struct.frame);
             }else{
-                struct.replacePanel(new nextTaskPanel(struct));
+                backCommand.run();
                 struct.errorLabel.setText("task changed successfully!!");
                 SwingUtilities.updateComponentTreeUI(struct.frame);
             }

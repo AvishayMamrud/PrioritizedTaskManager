@@ -26,7 +26,7 @@ public class menuPanel extends JPanel {
         JButton button3 = new JButton("Next Task");
         button1.addActionListener(e -> struct.replacePanel(new addTaskPanel(struct)));
         button2.addActionListener(e -> struct.replacePanel(new viewTasksPanel(struct)));
-        button3.addActionListener(e -> struct.replacePanel(new nextTaskPanel(struct)));
+        button3.addActionListener(e -> struct.replacePanel(new nextTaskPanel(struct, null)));
         button1.setFont(font);
         button2.setFont(font);
         button3.setFont(font);
