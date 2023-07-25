@@ -24,9 +24,9 @@ public class frameStruct {
         this.frame.remove(this.panel);
         this.panel = new JPanel();
         this.panel.setLayout(new BorderLayout());
-        this.panel.add(new JScrollPane(panel));
+        this.panel.add(new JScrollPane(panel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER));
         frame.add(this.panel, BorderLayout.CENTER);
-
+//        this.frame.pack();
         SwingUtilities.updateComponentTreeUI(frame);
     }
 }

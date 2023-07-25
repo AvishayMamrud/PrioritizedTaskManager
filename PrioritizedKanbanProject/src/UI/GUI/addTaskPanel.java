@@ -31,6 +31,8 @@ public class addTaskPanel extends JPanel{
 
         JTextField name_textf = new JTextField();
         JTextArea desc_textf = new JTextArea();
+        desc_textf.setLineWrap(true);
+        desc_textf.setWrapStyleWord(true);
         DateFormat format = new SimpleDateFormat("d/M/yyyy");
         JFormattedTextField deadline_textf = new JFormattedTextField(format);
         deadline_textf.setText("12/11/2020");

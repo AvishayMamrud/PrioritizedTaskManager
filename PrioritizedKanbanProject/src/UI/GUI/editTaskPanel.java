@@ -34,6 +34,8 @@ public class editTaskPanel extends JPanel{
 
         JTextField name_textf = new JTextField(task.getName());
         JTextArea desc_textf = new JTextArea(task.getDescription());
+        desc_textf.setLineWrap(true);
+        desc_textf.setWrapStyleWord(true);
         DateFormat format = new SimpleDateFormat("d/M/yyyy");
         JFormattedTextField deadline_textf = new JFormattedTextField(format);
         LocalDate oldDeadline = task.getDeadline();

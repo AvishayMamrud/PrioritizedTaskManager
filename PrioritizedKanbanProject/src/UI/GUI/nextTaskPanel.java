@@ -8,6 +8,7 @@ import Utilities.ResponseT;
 import javax.swing.*;
 import java.awt.*;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class nextTaskPanel extends JPanel {
     public nextTaskPanel(frameStruct struct, Runnable backCommand) {
@@ -121,9 +122,13 @@ public class nextTaskPanel extends JPanel {
         Font priorityFont = new Font("MV Boli", Font.BOLD, 30);
 
         JLabel name_label = new JLabel();
-        JLabel desc_label = new JLabel();
+        JTextArea desc_label = new JTextArea();
         JLabel deadline_label = new JLabel();
         JLabel priority_label = new JLabel();
+
+        desc_label.setLineWrap(true);
+        desc_label.setWrapStyleWord(true);
+        desc_label.setEditable(false);
 
         name_label.setText(task.getName());
         desc_label.setText(task.getDescription());
@@ -131,7 +136,7 @@ public class nextTaskPanel extends JPanel {
         if(date == null){
             deadline_label.setText(" ");
         }else{
-            deadline_label.setText("the deadline is on " + date.toString());
+            deadline_label.setText("the deadline is on " + date.format(DateTimeFormatter.ofPattern("d/M/yyyy")));
         }
         priority_label.setText("priority - " + task.getPriority());
 
@@ -139,6 +144,12 @@ public class nextTaskPanel extends JPanel {
         desc_label.setFont(descFont);
         deadline_label.setFont(deadlineFont);
         priority_label.setFont(priorityFont);
+
+//        this.setSize(300,300);
+//        name_label.setSize(this.getSize().width * 8 / 10, 50);
+//        desc_label.setSize(this.getSize().width / 3, 50);
+//        deadline_label.setSize(this.getSize().width * 8 / 10, 50);
+//        priority_label.setSize(this.getSize().width * 8 / 10, 50);
 
         name_label.setAlignmentX(Component.CENTER_ALIGNMENT);
         desc_label.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -169,9 +180,7 @@ public class nextTaskPanel extends JPanel {
             }
             SwingUtilities.updateComponentTreeUI(struct.frame);
         });
-        btn_edit.addActionListener(e -> {
-            struct.replacePanel(new editTaskPanel(struct, task, callBack));
-        });
+        btn_edit.addActionListener(e -> struct.replacePanel(new editTaskPanel(struct, task, callBack)));
         btn_finish.addActionListener(e -> {
             Response response = struct.ptm.finishTask(task.getName());
             if(response.errorOccurred()){
@@ -182,9 +191,7 @@ public class nextTaskPanel extends JPanel {
             }
             SwingUtilities.updateComponentTreeUI(struct.frame);
         });
-        btn_next.addActionListener(e -> {
-            struct.replacePanel(new nextTaskPanel(struct, null));
-        });
+        btn_next.addActionListener(e -> struct.replacePanel(new nextTaskPanel(struct, null)));
 
         this.add(name_label);
         this.add(desc_label);
