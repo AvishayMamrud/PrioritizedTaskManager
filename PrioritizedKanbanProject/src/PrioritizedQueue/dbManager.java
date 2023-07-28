@@ -99,9 +99,10 @@ public class dbManager {
         try (Connection con = DriverManager.getConnection(path)) {
             String sqlStatement = "insert into " + tasksTbl + " (name, description, deadline, priority) values (?, ?, ?, ?);";
             PreparedStatement p = con.prepareStatement(sqlStatement);
+            LocalDate dl = task.getDeadline();
             p.setString(1, task.getName());
             p.setString(2, task.getDescription());
-            p.setDate(3, task.getDeadline() == null ? null : Date.valueOf(task.getDeadline()));
+            p.setDate(3, dl == null ? null : Date.valueOf(dl));
             p.setInt(4, task.getPriority());
             p.executeUpdate();
             return new Response();
@@ -155,9 +156,10 @@ public class dbManager {
         try (Connection con = DriverManager.getConnection(path)) {
             String sqlStatement = "insert into " + completedTbl + " (name, description, deadline, finishTime) values (?, ?, ?, ?);";
             PreparedStatement p = con.prepareStatement(sqlStatement);
+            LocalDate dl = task.getDeadline();
             p.setString(1, task.getName());
             p.setString(2, task.getDescription());
-            p.setDate(3, Date.valueOf(task.getDeadline()));
+            p.setDate(3, dl == null ? null : Date.valueOf(dl));
             p.setDate(4, Date.valueOf(finishTime));
             p.executeUpdate();
             return new Response();

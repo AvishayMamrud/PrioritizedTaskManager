@@ -14,7 +14,7 @@ public class GUI{
 
         struct = new frameStruct();
 
-        JPanel header = new headerPanel(struct, struct.errorLabel, struct.ptm);
+        JPanel header = new headerPanel(struct);
         JPanel menu = new menuPanel(struct);
 
         JPanel scrollMenu = new JPanel();

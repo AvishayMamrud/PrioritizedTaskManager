@@ -13,7 +13,6 @@ public class prioritizedTaskManager {
     private final int[] counters;
     private int totalCounter;
     private Task currTask;
-
     private final dbManager dal;
 
     public prioritizedTaskManager(int priorityRange) {
@@ -220,5 +219,14 @@ public class prioritizedTaskManager {
         }catch(Exception e2){
             return new Response(e2.getMessage());
         }
+    }
+
+    public void setCurrTask(Task task) {
+        int priority = task.getPriority();
+        tasks[priority - 1].removeIf(e -> e.equals(task));
+        tasks[priority - 1].add(task);
+        currTask = task;
+        counters[priority - 1]++;
+        totalCounter++;
     }
 }

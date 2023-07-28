@@ -14,13 +14,20 @@ import java.util.List;
 public class addTaskPanel extends JPanel{
 
     public addTaskPanel(frameStruct struct) {
+        this.setLayout(new BorderLayout());
+        JPanel panel1 = new JPanel();
+        this.add(panel1, BorderLayout.CENTER);
+        this.add(new JLabel("           "), BorderLayout.EAST);
+        this.add(new JLabel("           "), BorderLayout.WEST);
+
         GridBagLayout grid = new GridBagLayout();
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.ipadx = 25; // add padding
         gbc.ipady = 25;
         gbc.fill = GridBagConstraints.HORIZONTAL;
+//        gbc.anchor = GridBagConstraints.NORTH;
         gbc.insets = new Insets(1, 1, 1, 1);
-        this.setLayout(grid);
+        panel1.setLayout(grid);
 
         Font font = new Font("MV Boli", Font.BOLD, 16);
 
@@ -30,7 +37,7 @@ public class addTaskPanel extends JPanel{
         JLabel priority_label = newJLabel("Priority");
 
         JTextField name_textf = new JTextField();
-        JTextArea desc_textf = new JTextArea();
+        JTextArea desc_textf = new JTextArea(1,20);
         desc_textf.setLineWrap(true);
         desc_textf.setWrapStyleWord(true);
         DateFormat format = new SimpleDateFormat("d/M/yyyy");
@@ -66,12 +73,26 @@ public class addTaskPanel extends JPanel{
             }
         });
 
+        JScrollPane scroll = new JScrollPane(desc_textf, JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridBagLayout());
+        GridBagConstraints panelGBC = new GridBagConstraints();
+
+        panelGBC.weightx = 1;                    //I want to fill whole panel with JTextArea
+        panelGBC.weighty = 1;                    //so both weights =1
+        panelGBC.fill = GridBagConstraints.BOTH; //and fill is set to BOTH
+
+        panel.add(scroll, panelGBC);
+//        panel.setBackground(Color.gray);//this shouldn't be visible
+        panel.setBorder(BorderFactory.createEmptyBorder());
+        scroll.setBorder(BorderFactory.createEmptyBorder());
         List<JComponent> components = new ArrayList<>();
 
         components.add(name_label);
         components.add(name_textf);
         components.add(desc_label);
-        components.add(desc_textf);
+        components.add(panel);
         components.add(deadline_label);
         components.add(deadline_textf);
         components.add(priority_label);
@@ -79,21 +100,26 @@ public class addTaskPanel extends JPanel{
 
         int i = 0;
         for (JComponent c : components) {
-            c.setBorder(BorderFactory.createLineBorder(new Color(0x57D1F7))); // turquoise
-            c.setFont(font);
+            if(c == panel){
+                desc_textf.setBorder(BorderFactory.createLineBorder(new Color(0x57D1F7))); // turquoise
+                desc_textf.setFont(font);
+            }else{
+                c.setBorder(BorderFactory.createLineBorder(new Color(0x57D1F7))); // turquoise
+                c.setFont(font);
+            }
             gbc.weightx = ((i % 2) + 1) * ((i % 2) + 1);
             gbc.gridy = i / 2;
             gbc.gridx = i++ % 2;
-            this.add(c, gbc);
+            panel1.add(c, gbc);
         }
         button.setFont(font);
         gbc.gridy = i / 2;
         gbc.gridx = i % 2;
         gbc.gridwidth = 2;
-        this.add(button, gbc);
+        panel1.add(button, gbc);
 
-        struct.errorLabel.setText("");
-        this.setAlignmentY(Component.TOP_ALIGNMENT);
+        struct.errorLabel.setText(" ");
+        panel1.setAlignmentY(Component.TOP_ALIGNMENT);
     }
 
     private JLabel newJLabel(String caption){

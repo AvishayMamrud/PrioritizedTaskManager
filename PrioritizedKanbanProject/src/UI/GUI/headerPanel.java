@@ -7,19 +7,19 @@ import java.awt.*;
 
 public class headerPanel extends JPanel {
 
-    public headerPanel(frameStruct struct, JLabel errorLabel, prioritizedTaskManager ptm){
+    public headerPanel(frameStruct struct){
         this.setLayout(new BorderLayout());
 
-        errorLabel.setFont(new Font("MV Boli", Font.BOLD, 16));
-        errorLabel.setForeground(Color.red);
-        errorLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        struct.errorLabel.setFont(new Font("MV Boli", Font.BOLD, 16));
+        struct.errorLabel.setForeground(Color.red);
+        struct.errorLabel.setHorizontalAlignment(SwingConstants.CENTER);
         JLabel label = new JLabel("Task Manager");
         label.setHorizontalAlignment(SwingConstants.CENTER);
         label.setFont(new Font("MV Boli", Font.BOLD, 35));
-        label.setBackground(new Color(0x739AF1));
-        label.setOpaque(true);
+        this.setBackground(new Color(0x739AF1));
+        this.setOpaque(true);
 
         this.add(label, BorderLayout.NORTH);
-        this.add(errorLabel, BorderLayout.CENTER);
+        this.add(struct.errorLabel, BorderLayout.CENTER);
     }
 }

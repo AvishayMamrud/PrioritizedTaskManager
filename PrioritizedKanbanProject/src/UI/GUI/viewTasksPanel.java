@@ -15,6 +15,12 @@ public class viewTasksPanel extends JPanel {
 
     public viewTasksPanel(frameStruct struct) {
         GridBagLayout grid = new GridBagLayout();
+        JPanel panel = new JPanel();
+        this.setLayout(new BorderLayout());
+        this.add(panel, BorderLayout.CENTER);
+        this.add(new JLabel("           "), BorderLayout.EAST);
+        this.add(new JLabel("           "), BorderLayout.WEST);
+
         ResponseT<java.util.List<Task>> resp = struct.ptm.getTasks();
 
         if(resp.errorOccurred()){
@@ -24,13 +30,13 @@ public class viewTasksPanel extends JPanel {
             if(tasks.size() == 0){
                 struct.errorLabel.setText("no tasks to display.");
             }else{
-                struct.errorLabel.setText("");
+                struct.errorLabel.setText(" ");
                 List<JComponent> components = new ArrayList<>();
 
                 GridBagConstraints gbc = new GridBagConstraints();
 
 //                grid.columnWidths = new int[]{200, 300, 400, 50};
-                this.setLayout(grid); // priority, name, deadline, delete
+                panel.setLayout(grid); // priority, name, deadline, delete
 
                 gbc.ipadx = 25; // add padding
                 gbc.ipady = 25;
@@ -48,14 +54,9 @@ public class viewTasksPanel extends JPanel {
                     components.add(deadlineLabel);
                     JButton button = new JButton("-");
                     button.addActionListener(e -> {
-//                        System.out.println(struct.ptm.removeTask(task));
-//                        this.remove(priorityLabel);
-//                        this.remove(nameLabel);
-//                        this.remove(deadlineLabel);
-//                        this.remove(button);
-//                        struct.errorLabel.setText("The task has been removed");
-//                        SwingUtilities.updateComponentTreeUI(struct.frame);
-                        struct.replacePanel(new nextTaskPanel(struct, task, () -> struct.replacePanel(new viewTasksPanel(struct))));
+                        struct.ptm.setCurrTask(task);
+                        struct.replacePanel(new nextTaskPanel(struct, task,
+                                () -> struct.replacePanel(new viewTasksPanel(struct))));
                     });
                     components.add(button);
                 }
@@ -69,12 +70,12 @@ public class viewTasksPanel extends JPanel {
                     c.setBorder(BorderFactory.createLineBorder(new Color(0x57D1F7)));
                     gbc.gridy = i / 4;
                     gbc.gridx = i++ % 4;
-                    this.add(c, gbc);
+                    panel.add(c, gbc);
                 }
             }
         }
 
-        this.setAlignmentY(Component.TOP_ALIGNMENT);
+        panel.setAlignmentY(Component.TOP_ALIGNMENT);
     }
 
     private JLabel newJLabel(String caption){
